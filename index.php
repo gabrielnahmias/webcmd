@@ -57,7 +57,7 @@ $i = ( $br -> Platform == "iPhone" );
 	$arrCmdKeys = array_keys($arrCmds);
 	
 	foreach ($arrCmds as $strCmd => $strText)
-		print "arrHelp.$strCmd = \"$strText\";\n\r\n";
+		print "arrHelp[\"$strCmd\"] = \"$strText\";\n\r\n";
 	
 	for ($i = 0; $i < count($arrCmds); $i++)
 		print "arrCmds[$i] = \"" . $arrCmdKeys[$i] . "\";\r\n";
@@ -141,7 +141,7 @@ $i = ( $br -> Platform == "iPhone" );
                     
                      if ( is(command, "bold") ) {
                          
-                         usage = arrHelp.bold;
+                         usage = arrHelp["bold"];
                      
                          if (boolNoHelp) {
 						 	
@@ -246,7 +246,7 @@ $i = ( $br -> Platform == "iPhone" );
 						
                     } else if ( is(command, "font") ) {
                          
-                         usage = arrHelp.font;
+                         usage = arrHelp["font"];
                          
 						 if (boolNoHelp) {
 							 
@@ -296,7 +296,7 @@ $i = ( $br -> Platform == "iPhone" );
 						 
                     } else if ( is(command, "italic") ) {
                          
-                         usage = arrHelp.italic;
+                         usage = arrHelp["italic"];
                      
                          if (boolNoHelp) {
 						 	
@@ -320,7 +320,7 @@ $i = ( $br -> Platform == "iPhone" );
 						 
                     } else if ( is(command, "new") || is(command, "webcmd") ) {
                          
-						usage = arrHelp.new;
+						usage = arrHelp["new"];
                      	
 						if (boolNoHelp)
 							window.open("<?=SELF?>");
@@ -367,9 +367,21 @@ $i = ( $br -> Platform == "iPhone" );
 							
 						}
 					
-					} else if ( is(command, "size") ) {
+					}/* else if ( is(command, "set") && args && boolNoHelp ) {
+						 
+						 // Maybeeee...
+						 
+						 if ( args.indexOf("=") != -1 ) {
+						 var arrSet = args.split("=");
+						 
+						 eval(args);
+						 
+						 alert(eval(arrSet[0]));
+						 }
+						 
+                    }*/ else if ( is(command, "size") ) {
                          
-                         usage = arrHelp.size;
+                         usage = arrHelp["size"];
                          
                          if (boolNoHelp) {
 							 
