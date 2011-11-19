@@ -1,12 +1,20 @@
 v0.0.0.4 -
 	
+	+ "Major Overhaul Edition"
+	
+	+ Allowed built-in commands to be referenced through the 'help' command.
+	
+	+ 'Italic' command added.
+	
+	+ Made 'color' check if the colors will conflict (same foreground and background).
+	
 	+ Made entered commands add to a visual history just like the real deal.
 	
 	+ Made built-in commands case-insensitive.
 	
-	+ Remade 'prompt', 'title', and 'cls' commands.
+	+ Made preexistent 'prompt', 'title', and 'cls' commands functional.
 	
-	+ Fixed issue with 'font' where it wasnt allowing most fonts with names longer than one word
+	+ Fixed issue with 'font' where it wasn't allowing most fonts with names longer than one word
 	  to be set (an issue of wrapping it in quotes).
 	  
 	+ 'Color':
@@ -14,6 +22,8 @@ v0.0.0.4 -
 			1) No argument, revert to default tones.
 			2) One character for the argument, it affects the forecolor.
 			3) A same color combination attempted, it is prevented.
+	
+	+ Probably more of which I can't think.
 	
 v0.0.0.3 -
 
