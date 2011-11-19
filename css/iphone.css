@@ -1,0 +1,38 @@
+/*
+ *	I don't know if it's just for me but after I added some custom-tailored
+ *	CSS for the orientations, the font-size would not go back to normal.  I'll
+ *	have to test this on other phones.
+ */
+
+/* Portrait */
+@media screen and (max-width: 640px) {
+
+	#input {
+		
+		width: 280px !important;
+		
+	}
+
+}
+
+/* Landscape */
+@media screen and (min-width: 641px) {
+	
+	#input {
+		
+		width: 600px !important;
+		
+	}
+	
+}
+
+body {
+	
+	
+}
+
+#prompt {
+	
+	margin-right: 5px;
+	
+}

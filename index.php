@@ -1,7 +1,10 @@
 <?php
 
-include_once "../vs.php";
-include_once "ver.inc.php";
+include_once "common.php";
+
+$br = new Browser;
+
+$i = ( $br -> Platform == "iPhone" );
 
 //chdir("C:");
 
@@ -9,566 +12,561 @@ include_once "ver.inc.php";
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Terrasoft WebCmd v<?=VERSION?></title>
-
-<link href="img/fav.gif" rel="shortcut icon" />
-<link href="css/styles.css" rel="stylesheet" type="text/css" />
-
-<script src="js/jquery.min.js"></script>
-
-<script language="javascript">
-
-function chr(codePt) {
+<title><?php if (!$i) print "Terrasoft "; print NAME; if (!$i) print " v" . VERSION; ?></title>
+    
+    <?php if ($i): ?>
+    
+    <link rel="apple-touch-icon-precomposed" href="./img/touchfav.png" />
+    <link rel="apple-touch-startup-image" href="./img/splash.png" />
+    
+    <?php endif; ?>
+    
+    <link href="./img/fav.gif" rel="shortcut icon" />
 	
-    if (codePt > 0xFFFF) {
-		
-        codePt -= 0x10000;
+    <link href="./css/styles.css" rel="stylesheet" type="text/css" />
+    <?php css_add(); ?>
+    
+    <?php if($i): ?>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width; initial-scale=0.5; maximum-scale=0.5;">
+    
+    <?php endif; ?>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+    
+    <script src="./js/easing.js"></script>
+    <script src="./js/date.js"> <!-- SO much overhead for, seriously, two calls --> </script>
+    <script src="./js/functions.js"></script>
+    
+    <script language="javascript">
+	
+	var arrCmds = new Array();
+	var arrHelp = new Array();
+	
+	<?php
+	
+	$arrCmdKeys = array_keys($arrCmds);
+	
+	foreach ($arrCmds as $strCmd => $strText)
+		print "arrHelp.$strCmd = \"$strText\";\n\r\n";
+	
+	for ($i = 0; $i < count($arrCmds); $i++)
+		print "arrCmds[$i] = \"" . $arrCmdKeys[$i] . "\";\r\n";
+	
+	?>
+	
+	var strOutput;
+	var strInitPath = "<?=addslashes( getcwd() );?>>";;
+	
+    var browser = navigator.appName;
+	
+    var entries = new Array();
+    var entryNo = 0;
+    var place = 0;
+	
+    $(document).ready( function() {
         
-		return String.fromCharCode( 0xD800 + (codePt >> 10), 0xDC00 + (codePt & 0x3FF) );
-    
-	}
-	
-    return String.fromCharCode(codePt);
-}
-
-function cursorAnimation() {
-	
-	$("#cursor").animate( { opacity: 0 } , "fast", "swing" ).animate( { opacity: 1 }, "fast", "swing" );  
-	
-}  
-
-function empty(mixed_var) {
-    
-    var key;
-	
-	var noSpaces = mixed_var.replace(/\s/g, "");
-	
-	if (noSpaces == "")
-        return true;
-	
-    if (typeof mixed_var == 'object') {
+        $("#input").focus();
         
-		for (key in mixed_var)
-            return false;
-			
-		return true;
-    
-	}
- 
-    return false;
-	
-}
-
-function explode(delimiter, string, limit) {
-	
-     var emptyArray = { 0: '' };
-    
-    // third argument is not required
-    if ( arguments.length < 2 ||
-        typeof arguments[0] == 'undefined' ||        typeof arguments[1] == 'undefined' ) {
-        return null;
-    }
- 
-    if ( delimiter === '' ||        delimiter === false ||
-        delimiter === null ) {
-        return false;
-    }
-     if ( typeof delimiter == 'function' ||
-        typeof delimiter == 'object' ||
-        typeof string == 'function' ||
-        typeof string == 'object' ) {
-        return emptyArray;    }
- 
-    if ( delimiter === true ) {
-        delimiter = '1';
-    }    
-    if (!limit) {
-        return string.toString().split(delimiter.toString());
-    } else {
-        // support for limit argument        var splitted = string.toString().split(delimiter.toString());
-        var partA = splitted.splice(0, limit - 1);
-        var partB = splitted.join(delimiter.toString());
-        partA.push(partB);
-        return partA;    }
-}
-
-function strmul(str, num) {
-	
-	if (!num) return "";
-	
-	var	orig = str,
-		soFar = [str],
-		added = 1,
-		left, i;
-	
-	while (added < num) {
-		
-		left = num - added;
-		str = orig;
-		
-		for (i = 2; i < left; i *= 2)
-			str += str;
-		
-		soFar.push(str);
-		added += (i / 2);
-	
-	}
-	
-	return soFar.join("");
-	
-}
-
-function strtok(str, tokens) {
-	
-    // BEGIN REDUNDANT
-    this.php_js = this.php_js || {};
-    // END REDUNDANT
-    if (tokens === undefined) {
-        tokens = str;
-        str = this.php_js.strtokleftOver;
-    }
-    if (str.length === 0) {
-        return false;
-    }
-    if (tokens.indexOf(str.charAt(0)) !== -1) {
-        return this.strtok(str.substr(1), tokens);
-    }
-    for (var i = 0; i < str.length; i++) {
-        if (tokens.indexOf(str.charAt(i)) !== -1) {
-            break;
+        ua = navigator.userAgent;
+        
+        if ( /iPhone/g.test(ua) )
+            iPhone = true;
+        else
+            iPhone = false;
+        
+        if (iPhone) {									 // mobile safari likes to shrink the size of my input area!
+            $("#input").css("font-size", "17pt");		 // fix it.. also change the margin a little
+            $("#input").css("margin-left", "-17px");
         }
-    }
-    this.php_js.strtokleftOver = str.substr(i + 1);
-    return str.substring(0, i);
-
-}
-
-function resize() {
-	
-	len = $("#output").val().length;
-	
-	if (len < 40) len = 41;		// this accomodates HUGE pastes like for SVN URLs
-	
-	$("#output").css("width", len * 10);
-	
-}
-
-function toggleStatus() {
-    if ($('#toggleElement').is(':checked')) {
-        $('#elementsToOperateOn :input').attr('disabled', true);
-    } else {
-        $('#elementsToOperateOn :input').removeAttr('disabled');
-    }   
-}
-
-new function($) {
-	
-	$.fn.paste = function() {
-	
-		if (pasted = $(this).get(0).createTextRange) {
-
-			$(this).get(0).execCommand("Paste");
-			
-		}
-		
-	}
-	
-}(jQuery);
-
-entries = new Array();
-entryNo = 0;
-place = 0;
-
-var browser = navigator.appName;
-
-$(document).ready( function() {
-	
-	$("#output").focus();
-	
-	ua = navigator.userAgent;
-	
-	if ( /iPhone/g.test(ua) )
-		iPhone = true;
-	else
-		iPhone = false;
-	
-	if (iPhone) {									 // mobile safari likes to shrink the size of my input area!
-		$("#output").css("font-size", "17pt");		 // fix it.. also change the margin a little
-		$("#output").css("margin-left", "-17px");
-	}
-	
-	setInterval("cursorAnimation()", 600);
-	
-	$("#output").keydown( function(event) {
-			
-			resize();
-			
-			if (event.which == 13) {
-				
-				line = $("#output").val();
-				
-				command = strtok(line, " ");
-				args = strtok("");
+        
+        $("#input").keydown( function(event) {
+                
+                resize();
+                
+                if (event.which == 13) {
+                    
+					// Enter key pressed.
+					
+					strOutput = "";
+					
+                    line = $("#input").val();
+                    
+                    command = strtok(line, " ");
+                    args = strtok("");
+					
+					if (args) {
+						
+						if ( typeof args === "string" )
+							args = args.trim()
+						
+						// I feel so C-y right now, tee hee :)
+						
+						argv = args.split(" ");
+						argc = argv.length;
+						
+					} else
+						argc = 0;
+					
+					boolNoHelp = (args != "/?") ? true : false;
+						
+                    if (line != "") {
+                        
+                        entries[++entryNo] = line;
+                        
+                        place = entries.length;
+						
+                    }
+                    
+                    if ( is(command, "exit") ) {
+						
+						// I forget why, but I must set this by itself for it to work.
+						
+                        if (browser != "Netscape" || window.opener != null)
+                            self.close();
+                        
+                        else
+                            strOutput = "";
+                        
+                    }
+                    
+                     if ( is(command, "bold") ) {
+                         
+                         usage = arrHelp.bold;
+                     
+                         if (boolNoHelp) {
+						 	
+							if (args) {
 								
-				if (line != "") {
-					
-					entries[++entryNo] = line;
-					
-					place = entries.length;
-					
-				}
-				
-				if (command == "exit") {
-					
-					if (browser != "Netscape" || window.opener != null)
-						self.close();
-					
-					else {
-												
-						$("#output").val("");
-						
-						alert("You can only close windows called by script in Firefox/WebKit!");
-						
-					}
-					
-				}
-				
-				if (command == "cd" && args && args != "/?") {
-					
-					alert('working on chdir')
-					
-				} else if (command == "color" && args && args != "/?") {
-					
-					bg = args[0];
-					bg = bg.toUpperCase();
-					
-					if (args[1]) {
-						
-						fg = args[1];
-						fg = fg.toUpperCase();
-						
-						switch(fg) {
+								if ( args.search(/\bon\b/i) != -1 )
+									style("bold");
+								else if ( args.search(/\boff\b/i) != -1 )
+	                                style("bold", false);
+								
+							} else { 
 							
-							case "0":
-								fg = "black";
-								break;
-							case "1":
-								fg = "blue";
-								break;
-							case "2":
-								fg = "green";
-								break;
-							case "3":
-								fg = "aqua";
-								break;
-							case "4":
-								fg = "red";
-								break;
-							case "5":
-								fg = "purple";
-								break;
-							case "6":
-								fg = "yellow";
-								break;
-							case "7":
-								fg = "#EEE";
-								break;
-							case "8":
-								fg = "gray";
-								break;
-							case "9":
-								fg = "#0CF";
-								break;
-							case 'A':
-								fg = "#0F0";
-								break;
-							case 'B':
-								fg = "#0F9";
-								break;
-							case 'C':
-								fg = "#FF6C6C";
-								break;
-							case 'D':
-								fg = "#99F";
-								break;
-							case 'E':
-								fg = "#FF6";
-								break;
-							case 'F':
-								fg = "white";
-								break;
-							
-						}
-							
-					}
-					
-					switch(bg) {
+								if ( ( $("body").css("font-weight") != "700" )  )			// Embolden.
+									style("bold");
+	                            else if ( ( $("body").css("font-weight") != "normal" ) )	// Unbold.
+                                	style("bold", false);
+								
+                            }
+                            
+						 }
+						 
+                    } else if ( ( is(command, "cd") ) && args && boolNoHelp) {
+                        
+						strOutput = "Working on <strong>cd/chdir</strong>.";
 						
-						case "0":
-							bg = "black";
-							break;
-						case "1":
-							bg = "blue";
-							break;
-						case "2":
-							bg = "green";
-							break;
-						case "3":
-							bg = "aqua";
-							break;
-						case "4":
-							bg = "red";
-							break;
-						case "5":
-							bg = "purple";
-							break;
-						case "6":
-							bg = "yellow";
-							break;
-						case "7":
-							bg = "#EEE";
-							break;
-						case "8":
-							bg = "gray";
-							break;
-						case "9":
-							bg = "#0CF";
-							break;
-						case 'A':
-							bg = "#0F0";
-							break;
-						case 'B':
-							bg = "#0F9";
-							break;
-						case 'C':
-							bg = "#FF6C6C";
-							break;
-						case 'D':
-							bg = "#99F";
-							break;
-						case 'E':
-							bg = "#FF6";
-							break;
-						case 'F':
-							bg = "white";
-							break;
+                    } else if ( ( is(command, "cls") ) && boolNoHelp) {
+                        
+						$("#header").html("");
+						$("#output").html("");
 						
-					}
+                    } else if ( ( is(command, "color") ) && boolNoHelp) {
+                        
+						if (args) {
+							
+							bg = args[0];
+							bg = bg.toUpperCase();
+							
+							if ( args[1] ) {
+								
+								fg = args[1];
+								fg = fg.toUpperCase();
+								
+								fg = color(fg);
+									
+							}
+							
+							bg = color(bg);
+							
+							strCurrBG = $("body").css("backgroundColor");
+							strCurrFG = $("body").css("color");
+
+							// The following conditional prevents same color combinations from occurring.
+							
+							if ( ( bg != fg ) && ( fg != strCurrBG ) && ( bg != strCurrFG ) ) {
+								
+								if (args.length == 1) {
+									
+									// If there's only ONE character for an argument, shift the color
+									// scheme: BG becomes FG.
+									
+									// Gotta convert colors to RGB for comparison.
+									
+									var strBGRGB = hexToRGB(bg);
+									
+									if (strBGRGB != strCurrBG) {
 										
-					if (args[1])
-						$("body").css("color",fg);
-					
-					$("body").css("background",bg);
-					
-					if (args[1])
-						$("#output").css("color",fg);
-					
-					$("#output").css("background",bg);
-					
-					$("#output").val("");
-					
-				} else if (command == "font") {
-					 
-					 usage = "Usage: font name";
-					 
-					 if (args) {
-						 
-						 if (args == "/?")
-						 	$("#result").text(usage);
-						 
-						 else {
-							
-							$("body").css("font-family", args);
-							$("#output").css("font-family", args);
-							
-						 }
-						 
-					 } else
-						 $("#result").text(usage);
-					
-					 $("#output").val("");
-					
-				} else if (command == "size") {
-					 
-					 usage = "Usage: size point-integer";
-					 
-					 if (args) {
-						 
-						 if (args == "/?")
-						 	$("#result").text(usage);
-						 
-						 else {
-							
-							$("body").css("font-size", args+"pt");
-							$("#output").css("font-size", args+"pt");
-							
-						 }
-						 
-					 } else
-						 $("#result").text(usage);
-					
-					 $("#output").val("");
-					
-				} else if (command == "bold") {
-					 
-					 usage = "Turns text emboldening on or off.";
-				 
-					 if (args == "/?")
-						$("#result").text(usage);
-					 
-					 else {
-						
-						if ( $("body").css("font-weight") != "700" ) {
-							
-							$("body").css("font-weight","700");
-							$("#output").css("font-weight","700");
+										// Make sure the foreground we're trying to change to doesn't conflict
+										// with the current background.
+										
+										$("body").css("color", bg);
+										$("#input").css("color", bg);
+										
+									}
+									
+								} else {
+									
+									$("body").css("color", fg);
+									
+									$("body").css("backgroundColor", bg);
+									
+									$("#input").css("color", fg);
+									
+									$("#input").css("backgroundColor", bg);
+									
+								}
+								
+							}
 							
 						} else {
 							
-							$("body").css("font-weight","normal");
-							$("#output").css("font-weight","normal");
+							// Go default when no there's no arguments.
+							
+							$("body").css("color", "#0F0");
+							
+							$("body").css("background", "#000");
+							
+							$("#input").css("color", "#0F0");
+							
+							$("#input").css("background", "#000");
 							
 						}
 						
-					 }
-					 
-					 $("#output").val("");
-					
-				} else if (command == "new") {
-					 
-					 usage = "Opens a new console window.";
-				 
-					 if (args == "/?")
-						$("#result").text(usage);
-					 
-					 else {
-						
-						window.open("index.php");
-						
-					 }
-					 
-					 $("#output").val("");
-					
-				} else {
-						
-					$.get(
-					
-						"cmd.php",
-						
-						{cmd: line},
-						
-						function(data) {
+                    } else if ( is(command, "font") ) {
+                         
+                         usage = arrHelp.font;
+                         
+						 if (boolNoHelp) {
+							 
+							 // Wrap it up if it's got more than one word.
+							 
+							 if (argc > 1)
+								 args = "\"" + args + "\"";
+							 
+							 if (args) {
+								
+								$("body").css("font-family", args);
+								$("#input").css("font-family", args);
+								
+							 } else {
+								
+								var chrEnding = "";
+								
+								var strVerb = "is";
+								
+								var strFonts = $("body").css("font-family");
+								
+								var arrFonts = strFonts.split(",");
+								
+								var intFonts = arrFonts.length;
+								
+								if ( intFonts > 1 ) {
+									
+									// Plural
+									
+									chrEnding = "s";
+									
+									strVerb = "are";
+									
+								}
+								
+								strOutput = "The current font" + chrEnding + " " + strVerb + " ";
+								
+								for(i = 0; i < intFonts; i++)
+									strOutput += ( ( ( i == intFonts - 1 ) && ( intFonts != 1 ) ) ? "and " : "" ) + arrFonts[i] +
+												 ( (i < intFonts - 1) ? ", " : "" );
+								
+								strOutput += ".";
+								
+							 }
+							 
+						 }
+						 
+                    } else if ( is(command, "italic") ) {
+                         
+                         usage = arrHelp.italic;
+                     
+                         if (boolNoHelp) {
+						 	
+							if (args) {
+								
+								if ( args.search(/\bon\b/i) != -1 )
+									style("italic");
+								else if ( args.search(/\boff\b/i) != -1 )
+	                                style("italic", false);
+								
+							} else { 
 							
-							if (line!="")
-								msg = data;
-							else
-								msg = '';	
+								if ( ( $("body").css("font-weight") != "700" )  )			// Embolden.
+									style("italic");
+	                            else if ( ( $("body").css("font-weight") != "normal" ) )	// Unbold.
+                                	style("italic", false);
+								
+                            }
+                            
+						 }
+						 
+                    } else if ( is(command, "new") || is(command, "webcmd") ) {
+                         
+						usage = arrHelp.new;
+                     	
+						if (boolNoHelp)
+							window.open("index.php");
+                        
+                    } else if ( is(command, "prompt") && boolNoHelp ) {
+						
+						var strPrompt;
+						
+						if (boolNoHelp) {
 							
-							$("#result").html(msg);
+							if (args) {
+								
+								strPrompt = args;
+								
+								if ( !args.match(/[|<>]/) ) {
+									
+									var strMSVer = "<?php exec("ver", $arrOut); print $arrOut[1]; unset($arrOut); ?>";
+									
+									var dateNow = new Date();
+									
+									strPrompt = strPrompt.replace(/\$A/gi, "&");
+									strPrompt = strPrompt.replace(/\$B/gi, "|");
+									strPrompt = strPrompt.replace(/\$C/gi, "(");
+									strPrompt = strPrompt.replace(/\$D/gi, dateNow.toString("ddd MM/dd/yyyy") );
+									strPrompt = strPrompt.replace(/\$E/gi, "←");
+									strPrompt = strPrompt.replace(/\$F/gi, ")");
+									strPrompt = strPrompt.replace(/\$G/gi, ">");
+									strPrompt = strPrompt.replace(/[.\d\D\b]\$H/gi, "");
+									strPrompt = strPrompt.replace(/\$L/gi, "<");
+									strPrompt = strPrompt.replace(/\$N/gi, strInitPath.substr(0, 1) );		2	// needs fix (once you can "cd") 
+									strPrompt = strPrompt.replace(/\$P/gi, strInitPath.substring(0, ( strInitPath.length - 1) ) );		// same
+									strPrompt = strPrompt.replace(/\$Q/gi, "=");
+									strPrompt = strPrompt.replace(/\$S/gi, " ");
+									strPrompt = strPrompt.replace(/\$T/gi, dateNow.toString("HH:mm:ss:" + Math.round( ( dateNow.getMilliseconds() / 10 ) ) ) );
+									strPrompt = strPrompt.replace(/\$V/gi, strMSVer);
+									strPrompt = strPrompt.replace(/\$_/gi, "<br />");
+									strPrompt = strPrompt.replace(/\$\$/gi, "$");
+									
+								} else
+									strOutput = "The syntax of the command is incorrect.";
+								
+							} else
+								strPrompt = strInitPath;
 							
 						}
+					
+					} else if ( is(command, "size") ) {
+                         
+                         usage = arrHelp.size;
+                         
+                         if (boolNoHelp) {
+							 
+							 if (args) {
+								
+								$("body").css("font-size", args+"px");
+								$("#input").css("font-size", args+"px");
+								
+							 } else
+								strOutput = "The terminal's current font size is " + $("body").css("font-size") + "px.";
 						
-					)
-					
-					//$("#output").removeAttr("disabled");
-					
-					//$(document).click();
-					
-					$("#output").val("");
-					
-					resize();
-					
-					return true;
-					
-				}
-				
-			} else if (event.keyCode == 38) {
-				
-				if (place != 0)
-					place--;
-				
-				$("#output").val(entries[place]);
-				
-				resize();
-				
-				event.preventDefault();
-				
-				return true;
-				
-			} else if (event.keyCode == 40) {
-				
-				end = entries.length;
-				
-				if (place != end)
-					place++;
+						 }
+						
+                    } else if ( is(command, "title") && boolNoHelp ) {
+                         
+                         if (args)
+							document.title = args;
+						 
+                    } else if (command == "") {
+						
+						addToLog();		// Add a new prompt just like in CMD.
+						
+					} else {
+						
+						// The following handles whatever commands are not built-in,
+						// passing them to cmd.php for processing.
+						
+						if ( strOutput == "" ) {
+							
+							// As long as there's no custom message, do as planned.
+							
+							$.get(
+							
+								"cmd.php",
+								
+								{cmd: line},
+								
+								function(data) {
+									
+									// Gotta add boundary detection.
+									
+									var arrCmdsCopy = new Array();
+									
+									for (i = 0; i < arrCmds.length; i++)
+										arrCmdsCopy[i] = "\\b" + arrCmds[i] + "\\b";
+									
+									var regHelp = /help/i;
+									var regErr = /this command is not supported by the help utility/i;
+									var regCmds = new RegExp( arrCmdsCopy.join("|") , "i" );
+									
+									if ( is(command, "help") && is(data, "this command is not supported by the help utility") &&
+										 ( arrCmds.indexOf( args.toLowerCase() ) != -1 ) ) {
 										
-				$("#output").val(entries[place]);
-				
-				resize();
-				
-				event.preventDefault();
-				
-				return true;
-				
-			}
+										// If the argument is any one of the built-in commands, facilitate it!
+										
+										if ( regMatch = args.match(regCmds) )
+											strOutput = arrHelp[regMatch];
+										
+										addToLog(line, strOutput);
+										
+									} else
+										addToLog(line, data);
+									
+									scrollToBottom();
+									
+								}
+								
+							)
+							
+						}
+						
+                        //$("#input").removeAttr("disabled");
+                        
+                        //$(document).click()
+						
+						if (strOutput)
+							addToLog(line, strOutput + "<br />");
+						
+						scrollToBottom();
+						
+						resize();
+                        
+                        return true;
+                        
+                    }
+					
+					if (args == '/?')
+						addToLog(line, usage);
+					else if (strOutput)
+						addToLog(line, strOutput + "<br />");
+					else if ( command && !is(command, "cls") )
+						addToLog(line, "");
+					
+					// Odd placement of execution down here :\
+					
+					if ( is(command, "prompt") && strOutput == "" )
+						$("#prompt").html(strPrompt);
+					
+					scrollToBottom();
+					
+                } else if (event.keyCode == 38) {
+                    
+					// Going backward in the cache.
+					
+					// The following keeps us from going into empty negative space.
+					
+                    if (place != 1)
+                        place--;
+                    
+                    $("#input").val(entries[place]);
+                    
+                    resize();
+                    
+                    event.preventDefault();
+                    
+                    return true;
+                    
+                } else if (event.keyCode == 40) {
+                    
+					// Going forward in the cache.
+					
+                    end = entries.length;
+                    
+					// The following keeps us from going into the void.
+					
+                    if (place != end - 1)
+                        place++;
+                                            
+                    $("#input").val(entries[place]);
+                    
+                    resize();
+                    
+                    event.preventDefault();
+                    
+                    return true;
+                    
+                }
+                
+                $("#input").bind('paste', function(e) {
+                    
+                    $(this).paste();
+                    
+                    resize();
+                    
+                } );
+                
+        } );
+        
+        $("#output").ajaxStart( function() {
+            
+            //$("#input").attr("disabled", "disabled");
+            
+            width = "";
+            
+            if (iPhone)
+                width = "350";
+            
+            if (line != "" && line.toLowerCase() != "cls")
+                $("#loading").text("<?=TEXT_LOADING?>");
+    //			$("#output").html("<img src=\"img/loading.gif\" width=\"" + width + "\" />");
+            
+        } );
+        
+        $("#output").ajaxStop( function() {
 			
-			$("#output").bind('paste', function(e) {
-				
-				$(this).paste();
-				
-				resize();
-				
-			} );
+			$("#loading").text("");
 			
-	} );
+        } );
+        
+        $(document).click( function() {
+            $("#input").focus();
+        } );
+        
+		$(document).dblclick( function() {
+			$("#input").blur();
+        } );
+        
+        $(document).click();
+        
+        resize();
+        
+    } );
 	
-	$(document).click( function() {
-		$("#output").focus();
-	} );
-	
-	$(document).dblclick( function() {
-		$("#result").dblclick();
-	} );
-	
-	$("#result").dblclick( function() {
-		$("#output").blur();
-	} );
-	
-	$("#result").ajaxStart( function() {
-		
-		//$("#output").attr("disabled", "disabled");
-		
-		width = "";
-		
-		if (iPhone)
-			width = "350";
-		
-		if (line != "" && line.toLowerCase() != "cls")
-			$("#result").text("Loading Console Output...");
-//			$("#result").html("<img src=\"img/loading.gif\" width=\"" + width + "\" />");
-		
-	} );
-	
-	$(document).click();
-	
-	resize();
-	
-} );
-
-</script>
+	</script>
 
 </head>
 
-<body>
-
-Terrasoft WebCmd [Version <?=VERSION?>] [<?=vs();?>]
-<br />Copyright &copy; <?=date("Y")?> Terrasoft Inc.  All rights reserved.
-<br />
-<br /><?=getcwd()?>>
-<input id="output" type="text" />
-<!-- <div id="cursor">|</div> -->
-
-<br /><div id="result"></div>
+<body<?php if ($i) print " onorientationchange=\"updateOrientation();\""; ?>>
+    
+    <div id="header">
+        
+        <?=TEXT_HEADER?>
+        
+    </div>
+    
+    <div class="spaced">
+        
+        <div id="output"></div>
+        
+        <div id="prompt"><?=getcwd()?>></div> <input id="input" type="text" />
+    	
+        <br /><div id="loading"></div>
+        
+    </div>
 
 </body>
 

@@ -1,21 +1,53 @@
-v0.0.0.3 - + Allowed pipe characters to work (<,>,1>,2>).
-	   + Fixed an issue with the color feature where it wasn't keeping track of its entry
-	     in the arrow-navigable list of commands made.
-	   + Not sure if I'll keep this, but I made a loading GIF appear while you wait for output to come.
-	     Kind of looks bad on stuff that doesn't take a long time to output.
-	   + New favicon.
-	   + Made it look the same for Chrome.
-	   + Changed some margins, made the font size for the input area when on mobile the same as when 
-	     viewing on desktop.
-	   + Added more and more font changing capabilities.
-	   + Added strtok() to fix argument handling.
-	   + Added new window command.
+v0.0.0.4 -
+	
+	+ Made entered commands add to a visual history just like the real deal.
+	
+	+ Made built-in commands case-insensitive.
+	
+	+ Remade 'prompt', 'title', and 'cls' commands.
+	
+	+ Fixed issue with 'font' where it wasnt allowing most fonts with names longer than one word
+	  to be set (an issue of wrapping it in quotes).
+	  
+	+ 'Color':
+		- If there's:
+			1) No argument, revert to default tones.
+			2) One character for the argument, it affects the forecolor.
+			3) A same color combination attempted, it is prevented.
+	
+v0.0.0.3 -
 
-v0.0.0.2 - + Drastically changed everything.
-	   + Changed the div to a text field, made it return actual system calls.
-	   + Output system calls to text file.
-	   + Made a working "color" feature that mimics cmd.exe's.
-	   + Added the ability to browse through entries made.
+	+ Allowed pipe characters to work (<,>,1>,2>).
+	
+	+ Fixed an issue with the color feature where it wasn't keeping track of its entry
+	  in the arrow-navigable list of commands made.
+	
+	+ Not sure if I'll keep this, but I made a loading GIF appear while you wait for output to come.
+	  Kind of looks bad on stuff that doesn't take a long time to output.
+	
+	+ New favicon.
+	
+	+ Made it look the same for Chrome.
+	
+	+ Changed some margins, made the font size for the input area when on mobile the same as when 
+	  viewing on desktop.
+	
+	+ Added more and more font changing capabilities.
+	
+	+ Added strtok() to fix argument handling.
+	
+	+ Added new window command.
 
+v0.0.0.2 -
+
+	+ Drastically changed everything.
+	
+	+ Changed the div to a text field, made it return actual system calls.
+	
+	+ Output system calls to text file.
+	
+	+ Made a working "color" feature that mimics cmd.exe's.
+	
+	+ Added the ability to browse through entries made.
 
 v0.0.0.1 - First version.
