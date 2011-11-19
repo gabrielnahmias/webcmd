@@ -5,10 +5,14 @@ include_once "common.php";
 define("NAME", "WebCmd");
 define("VERSION", "0.0.0.4");
 
-// Text
+// Files
 
 define("FILE_OUT", "./etc/out");
 define("FILE_HELP", "./etc/help");
+
+// Text
+
+define("TEXT_EXIT", "You can only close windows called by script in Gecko/WebKit.");
 
 define("TEXT_HEADER", "Terrasoft WebCmd [Version " . VERSION . "] [" . vs() . "]".
         			  "<br />Copyright &copy; " . date("Y") . " Terrasoft Co.  All rights reserved.");

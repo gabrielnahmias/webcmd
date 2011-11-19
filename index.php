@@ -128,7 +128,7 @@ $i = ( $br -> Platform == "iPhone" );
                             self.close();
                         
                         else
-                            strOutput = "";
+                            strOutput = "<?=TEXT_EXIT?>";
                         
                     }
                     
