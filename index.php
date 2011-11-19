@@ -2,6 +2,13 @@
 
 include_once "common.php";
 
+define( "SELF" , basename(__FILE__) );
+
+import_request_variables("g");
+
+if ( isset($cd) && is_dir($cd) )
+	chdir($cd);
+
 $br = new Browser;
 
 $i = ( $br -> Platform == "iPhone" );
@@ -158,7 +165,7 @@ $i = ( $br -> Platform == "iPhone" );
 						 
                     } else if ( ( is(command, "cd") ) && args && boolNoHelp) {
                         
-						strOutput = "Working on <strong>cd/chdir</strong>.";
+						window.location = "<?=SELF?>?cd=" + args;
 						
                     } else if ( ( is(command, "cls") ) && boolNoHelp) {
                         
@@ -316,7 +323,7 @@ $i = ( $br -> Platform == "iPhone" );
 						usage = arrHelp.new;
                      	
 						if (boolNoHelp)
-							window.open("index.php");
+							window.open("<?=SELF?>");
                         
                     } else if ( is(command, "prompt") && boolNoHelp ) {
 						
@@ -453,7 +460,7 @@ $i = ( $br -> Platform == "iPhone" );
 						addToLog(line, usage);
 					else if (strOutput)
 						addToLog(line, strOutput + "<br />");
-					else if ( command && !is(command, "cls") )
+					else if ( command && !is(command, "cls") && !is(command, "cd") )
 						addToLog(line, "");
 					
 					// Odd placement of execution down here :\
