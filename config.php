@@ -3,7 +3,7 @@
 include_once "common.php";
 
 define("NAME", "WebCmd");
-define("VERSION", "0.0.0.4");
+define("VERSION", "0.0.4");
 
 // Files
 
@@ -43,10 +43,11 @@ $arrCmds["italic"] = "Turns text italicizing on or off. \
 					<br />The on/off switch is optional.  Without it, toggling will occur. \
 					<br />";
 
-$arrCmds["new"] = "Opens a new terminal window. \
-					<br /> \
-					<br />NEW \
-					<br />";
+$arrCmds["new"] =
+$arrCmds["webcmd"] = "Opens a new terminal window. \
+					 <br /> \
+					 <br />NEW \
+					 <br />";
 
 $arrCmds["size"] = "Changes the size (in pixels) of the terminal's font. \
 					<br /> \

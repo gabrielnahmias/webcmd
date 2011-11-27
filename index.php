@@ -581,7 +581,7 @@ $i = ( $br -> Platform == "iPhone" );
         
         <div id="output"></div>
         
-        <div id="prompt"><?=getcwd()?>></div> <input id="input" type="text" />
+        <div id="prompt"><?=getcwd()?>></div> <input autocapitalize="off" autofocus id="input" type="text" />
     	
         <br /><div id="loading"></div>
         
