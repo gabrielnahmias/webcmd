@@ -325,6 +325,10 @@ $i = ( $br -> Platform == "iPhone" );
 						if (boolNoHelp)
 							window.open("<?=SELF?>");
                         
+                    } else if ( is(command, "nircmd") && !boolNoHelp ) {
+                         
+						usage = arrHelp["nircmd"];
+                        
                     } else if ( is(command, "prompt") && boolNoHelp ) {
 						
 						var strPrompt;
